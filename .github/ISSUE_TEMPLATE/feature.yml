@@ -7,6 +7,7 @@ body:
     id: why
     attributes:
       label: Why
+      placeholder: Short rationale
     validations:
       required: true
 
@@ -14,14 +15,26 @@ body:
     id: what
     attributes:
       label: What
+      placeholder: Concrete change in 1–3 bullets
     validations:
       required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      placeholder: Things explicitly excluded
+    validations:
+      required: false
 
   - type: textarea
     id: draft_acs
     attributes:
       label: Draft ACs
-      description: One per line, AC-1, AC-2, …
+      placeholder: |
+        - AC-1: ...
+        - AC-2: ...
+        - AC-3: ...
     validations:
       required: true
 
@@ -29,49 +42,39 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Commands, versions, paths, data/fixtures
+      placeholder: |
+        - Stack/versions:
+        - Commands:
+        - Paths to touch:
+        - Data/fixtures:
     validations:
       required: true
 
-  # This block is invisible in the UI but persists in the issue body.
+  # Persisted, visible-but-collapsed Atlas block
   - type: markdown
     attributes:
       value: |
-        <!--
+        <details>
+        <summary>For Atlas (machine-readable)</summary>
+
+        ```atlas
         ATLAS:REFINE
-        OUTPUT BLOCKS (post as a single comment on success)
+        OUTPUTS: codex_prompt, acceptance_criteria, environment
 
-        Prompt for Codex
-        Context:
-        - Repo(s): <org>/<repo>
-        - Paths to touch: <paths>
-        Goal:
-        - <one sentence>
-        Constraints:
-        - <versions/tech constraints>
-        Out of scope:
-        - <bullets>
-        Deliverables:
-        - <bullets>
-        Branch & PR:
-        - branch: feature/<slug>
+        STATE:
+          COMPLETE:
+            MOVE: Ready
+            ADD: [ready, atlas-prepared]
+            REMOVE: [atlas, feedback-requested]
+          INCOMPLETE:
+            MOVE: Backlog
+            ADD: [feedback-requested]
 
-        Verification:
-        - Run: <commands>
-        - Expect: <observable checks>
-
-        Acceptance Criteria
-        AC-1: <behavior>; Verify: <steps, expected>
-        AC-2: <behavior>; Verify: <steps, expected>
-        AC-3: <behavior>; Verify: <steps, expected>
-
-        Environment
-        Branch pattern: feature/<slug>
-        Preview URL: <if any>
-        Secrets: <none|org secrets>
-        Data: <seed script or fixtures>
-
-        STATE RULES
-        - If complete → Stage=Ready; add [ready, atlas-prepared]; remove [atlas, feedback-requested].
-        - If incomplete → Stage=Backlog; add [feedback-requested]; comment missing info.
-        -->
+        REVIEW:
+          PASS:
+            MOVE: Done
+          FAIL:
+            MOVE: Ready
+            ADD: [needs-fix]
+        ```
+        </details>
