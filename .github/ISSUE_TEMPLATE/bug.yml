@@ -1,0 +1,38 @@
+name: Bug
+description: Failure against expected behavior
+title: "bug: <short summary>"
+labels: ["atlas", "bug", "p1"]
+body:
+  - type: textarea
+    id: current
+    attributes:
+      label: Current behavior
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: Expected behavior
+    validations:
+      required: true
+  - type: textarea
+    id: repro
+    attributes:
+      label: Reproduction steps
+      placeholder: "1) … 2) … 3) …"
+    validations:
+      required: true
+  - type: textarea
+    id: env
+    attributes:
+      label: Environment
+      placeholder: "Browser/OS/Version/Build"
+  - type: markdown
+    attributes:
+      value: |
+        <!--
+        ATLAS:REFINE (BUG)
+        - Normalize to a single outcome fix.
+        - Produce Prompt, ACs (include failing case), Env.
+        - Route per STATE RULES as in feature template.
+        -->
