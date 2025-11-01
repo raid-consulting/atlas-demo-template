@@ -1,0 +1,101 @@
+name: Feature
+description: Small, single-outcome requirement
+title: "feat: <imperative outcome>"
+labels: ["atlas", "p2", "tshirt-s"]
+body:
+  - type: textarea
+    id: why
+    attributes:
+      label: Why
+      description: Problem / value
+      placeholder: "Users cannot… Business needs…"
+    validations:
+      required: true
+  - type: textarea
+    id: what
+    attributes:
+      label: What (single outcome)
+      description: Scope in one short paragraph
+      placeholder: "Add … so that …"
+    validations:
+      required: true
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      placeholder: "Not changing…, exclude…"
+  - type: textarea
+    id: draft_acs
+    attributes:
+      label: Draft ACs (binary)
+      description: Atlas will refine to final ACs
+      placeholder: |
+        - AC-1: …
+        - AC-2: …
+  - type: dropdown
+    id: priority
+    attributes:
+      label: Priority
+      options: [p0, p1, p2]
+      default: 2
+  - type: dropdown
+    id: size
+    attributes:
+      label: Size
+      options: [tshirt-s, tshirt-m, tshirt-l]
+      default: 0
+  - type: textarea
+    id: env_notes
+    attributes:
+      label: Environment notes (optional)
+      placeholder: "Branch pattern, preview URL pattern, data seed, secrets, etc."
+  - type: markdown
+    attributes:
+      value: |
+        <!--
+        ATLAS:REFINE
+
+        GOAL
+        - Move to Ready with: Prompt for Codex, Acceptance Criteria, Environment.
+        - If critical info missing, move to Backlog, add label "feedback-requested", comment precise questions.
+
+        OUTPUT BLOCKS (overwrite or append below)
+
+        Prompt for Codex
+        ```
+        Context:
+        - Repo(s):
+        - Paths to touch:
+        Goal:
+        Constraints:
+        Out of scope:
+        Deliverables:
+        Branch & PR:
+        - branch: feature/<slug>
+        Verification:
+        - Run:
+        - Expect:
+        ```
+
+        Acceptance Criteria
+        ```
+        AC-1: <behavior>
+        Verify: <steps, expected>
+        AC-2: …
+        ```
+
+        Environment
+        ```
+        Branch pattern: feature/<slug>
+        Preview URL: https://preview.example.com/pr/<pr-number>
+        Secrets: none | org secrets
+        Data: seed script <path>
+        ```
+
+        STATE RULES
+        - If complete → add ["ready","atlas-prepared"], remove ["atlas","feedback-requested"], move to Ready.
+        - If incomplete → move to Backlog, add "feedback-requested", comment questions.
+
+        REVIEW HOOK
+        - On Review: validate ACs on preview env and post AC table (Pass/Fail/Evidence/Notes).
+        -->
