@@ -3,17 +3,10 @@ description: Request or propose a change
 title: "[Feature] <short title>"
 labels: [atlas, p2, tshirt-s]
 body:
-  - type: markdown
-    attributes:
-      value: |
-        Fill the sections. Keep it concise. Atlas will refine when label `atlas` is present and the issue is in Stage: Refinement.
-
   - type: textarea
     id: why
     attributes:
       label: Why
-      description: Why this is needed
-      placeholder: Short rationale
     validations:
       required: true
 
@@ -21,27 +14,14 @@ body:
     id: what
     attributes:
       label: What
-      description: What to change/add
-      placeholder: Concrete change in one or two bullets
     validations:
       required: true
-
-  - type: textarea
-    id: out_of_scope
-    attributes:
-      label: Out of scope
-      placeholder: Bullets of what is explicitly excluded
-    validations:
-      required: false
 
   - type: textarea
     id: draft_acs
     attributes:
       label: Draft ACs
-      description: Acceptance criteria candidates
-      placeholder: |
-        - AC-1: ...
-        - AC-2: ...
+      description: One per line, AC-1, AC-2, …
     validations:
       required: true
 
@@ -49,24 +29,11 @@ body:
     id: environment
     attributes:
       label: Environment
-      description: Commands, versions, paths to touch, data/fixtures
-      placeholder: |
-        - Stack/versions:
-        - Commands:
-        - Paths to touch:
-        - Data/fixtures:
+      description: Commands, versions, paths, data/fixtures
     validations:
       required: true
 
-  - type: checkboxes
-    id: atlas
-    attributes:
-      label: Atlas
-      description: Leave checked to trigger Atlas refinement
-      options:
-        - label: Ready for Atlas refinement
-          required: true
-
+  # This block is invisible in the UI but persists in the issue body.
   - type: markdown
     attributes:
       value: |
