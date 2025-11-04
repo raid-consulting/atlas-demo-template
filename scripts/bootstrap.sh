@@ -123,24 +123,53 @@ create_starter_issue(){
   # Fallback to inline body if template not found
   local body
   body=$(cat <<'EOF'
-Why
-- Validate the loop end-to-end with a harmless change.
+### Why
 
-What
+Validate the loop end-to-end with a harmless change.
+
+### What
+
 - Add "About" link in header pointing to /about.
 
-Out of scope
+### Out of scope
+
 - Styling beyond current nav pattern.
 - About page content.
 
-Draft ACs
+### Acceptance criteria
+
 - AC-1: Header shows "About" on desktop.
 - AC-2: Clicking "About" opens /about.
 - AC-3: No console errors on load.
 
-Meta
-- Priority: p2
-- Size: tshirt-s
+Atlas instructions below can be safely ignored and kept as-is
+
+### Atlas instructions
+
+<details>
+<summary>For Atlas (machine-readable)</summary>
+
+```atlas
+ATLAS:REFINE
+OUTPUTS: codex_prompt, acceptance_criteria, environment
+
+STATE:
+  COMPLETE:
+    MOVE: Ready
+    ADD: [ready, atlas-prepared]
+    REMOVE: [atlas, feedback-requested]
+  INCOMPLETE:
+    MOVE: Backlog
+    ADD: [feedback-requested]
+
+REVIEW:
+  PASS:
+    MOVE: Done
+  FAIL:
+    MOVE: Ready
+    ADD: [needs-fix]
+```
+</details>
 EOF
 )
   ISSUE_URL=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
