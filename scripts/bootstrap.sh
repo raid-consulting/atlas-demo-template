@@ -107,10 +107,10 @@ create_starter_issue(){
   log "Creating starter demo issue"
 
   # Prefer GitHub feature template if it exists
-  if gh issue create --repo "${OWNER}/${repo}" --title "Demo – add About link to header" --template feature --label atlas --label p2 --label tshirt-s --json url --jq '.url' >/dev/null 2>&1; then
+  if gh issue create --repo "${OWNER}/${repo}" --title "Demo – create initial landing page" --template feature --label atlas --label p2 --label tshirt-s --json url --jq '.url' >/dev/null 2>&1; then
     ISSUE_URL=$(gh issue create \
       --repo "${OWNER}/${repo}" \
-      --title "Demo – add About link to header" \
+      --title "Demo – create initial landing page" \
       --template feature \
       --label atlas \
       --label p2 \
@@ -129,20 +129,22 @@ Validate the loop end-to-end with a harmless change.
 
 ### What
 
-- Add "About" link in header pointing to /about.
+- Add an `index.html` landing page with simple, elegant styling.
+- Include welcoming text that introduces the Atlas demo.
+- Configure GitHub Pages so reviewers can load the landing page for acceptance testing.
 
 ### Out of scope
 
-- Styling beyond current nav pattern.
-- About page content.
+- Additional subpages or navigation elements.
+- Asset pipelines or build tooling.
 
 ### Acceptance criteria
 
-- AC-1: Header shows "About" on desktop.
-- AC-2: Clicking "About" opens /about.
-- AC-3: No console errors on load.
+Scenario: When browsing the website on GitHub Pages
 
-Atlas instructions below can be safely ignored and kept as-is
+- AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
+- AC-2: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
+- AC-3: The landing page renders without console errors in the browser.
 
 ### Atlas instructions
 
@@ -173,7 +175,7 @@ REVIEW:
 EOF
 )
   ISSUE_URL=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
-    -f title="Demo – add About link to header" \
+    -f title="Demo – create initial landing page" \
     -f body="$body" \
     -f labels[]=atlas \
     -f labels[]=p2 \
