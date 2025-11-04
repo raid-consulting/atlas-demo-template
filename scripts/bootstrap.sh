@@ -190,8 +190,8 @@ EOF
 )
 
   local issue_one_body issue_two_body
-  issue_one_body=$(printf '%%s\n%%s\n' "$initial_body" "$atlas_instructions")
-  issue_two_body=$(printf '%%s\n%%s\n' "$github_pages_body" "$atlas_instructions")
+  issue_one_body=$(printf '%s\n%s\n' "$initial_body" "$atlas_instructions")
+  issue_two_body=$(printf '%s\n%s\n' "$github_pages_body" "$atlas_instructions")
 
   local first_issue_url second_issue_url
   first_issue_url=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
