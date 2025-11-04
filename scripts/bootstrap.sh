@@ -18,6 +18,8 @@ STAGE_OPTS=("Backlog" "Refinement" "Ready" "In Progress" "Review" "Done")
 # Standard labels
 LABELS=(atlas feedback-requested ready wip needs-fix ci-failed passed-AC bug p0 p1 p2 tshirt-s tshirt-m tshirt-l)
 
+ISSUE_URLS=()
+
 # --- Utility ----------------------------------------------------------------
 die(){ echo "error: $*" >&2; exit 1; }
 log(){ echo "==> $*"; }
@@ -102,50 +104,12 @@ create_labels(){
   done
 }
 
-create_starter_issue(){
+create_starter_issues(){
   local repo="$1"
-  log "Creating starter demo issue"
+  log "Creating starter demo issues"
 
-  # Prefer GitHub feature template if it exists
-  if gh issue create --repo "${OWNER}/${repo}" --title "Demo – create initial landing page" --template feature --label atlas --label p2 --label tshirt-s --json url --jq '.url' >/dev/null 2>&1; then
-    ISSUE_URL=$(gh issue create \
-      --repo "${OWNER}/${repo}" \
-      --title "Demo – create initial landing page" \
-      --template feature \
-      --label atlas \
-      --label p2 \
-      --label tshirt-s \
-      --json url --jq '.url')
-    log "Issue created (from template): ${ISSUE_URL}"
-    return
-  fi
-
-  # Fallback to inline body if template not found
-  local body
-  body=$(cat <<'EOF'
-### Why
-
-Validate the loop end-to-end with a harmless change.
-
-### What
-
-- Add an `index.html` landing page with simple, elegant styling.
-- Include welcoming text that introduces the Atlas demo.
-- Configure GitHub Pages so reviewers can load the landing page for acceptance testing.
-
-### Out of scope
-
-- Additional subpages or navigation elements.
-- Asset pipelines or build tooling.
-
-### Acceptance criteria
-
-Scenario: When browsing the website on GitHub Pages
-
-- AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
-- AC-2: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
-- AC-3: The landing page renders without console errors in the browser.
-
+  local atlas_instructions
+  atlas_instructions=$(cat <<'EOF'
 ### Atlas instructions
 
 <details>
@@ -174,20 +138,88 @@ REVIEW:
 </details>
 EOF
 )
-  ISSUE_URL=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
+
+  local initial_body
+  initial_body=$(cat <<'EOF'
+### Why
+
+Validate the loop end-to-end with a harmless change.
+
+### What
+
+- Add an `index.html` landing page with simple, elegant styling.
+- Include welcoming text that introduces the Atlas demo.
+
+### Out of scope
+
+- Additional subpages or navigation elements.
+- Asset pipelines or build tooling.
+
+### Acceptance criteria
+
+Scenario: When browsing the website on GitHub Pages
+
+- AC-1: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
+- AC-2: The landing page renders without console errors in the browser.
+
+EOF
+)
+
+  local github_pages_body
+  github_pages_body=$(cat <<'EOF'
+### Why
+
+Enabling GitHub Pages ensures reviewers can access the new landing page for acceptance testing.
+
+### What
+
+- Enable GitHub Pages for this repository and point it at the default branch that serves the landing page.
+- No code changes are required; this is a repository settings update only.
+
+### Out of scope
+
+- Any work not directly related to enabling GitHub Pages for the landing page.
+
+### Acceptance criteria
+
+Scenario: When browsing the website on GitHub Pages
+
+- AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
+
+EOF
+)
+
+  local issue_one_body issue_two_body
+  issue_one_body=$(printf '%s\n%s\n' "$initial_body" "$atlas_instructions")
+  issue_two_body=$(printf '%s\n%s\n' "$github_pages_body" "$atlas_instructions")
+
+  local first_issue_url second_issue_url
+  first_issue_url=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
     -f title="Demo – create initial landing page" \
-    -f body="$body" \
+    -f body="$issue_one_body" \
     -f labels[]=atlas \
     -f labels[]=p2 \
     -f labels[]=tshirt-s \
     --jq '.html_url')
-  log "Issue created (inline): ${ISSUE_URL}"
+  log "Issue created (landing page): ${first_issue_url}"
+
+  second_issue_url=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \
+    -f title="Configure GitHub Pages for landing page" \
+    -f body="$issue_two_body" \
+    -f labels[]=atlas \
+    -f labels[]=p2 \
+    -f labels[]=tshirt-s \
+    --jq '.html_url')
+  log "Issue created (GitHub Pages): ${second_issue_url}"
+
+  ISSUE_URLS=("$first_issue_url" "$second_issue_url")
 }
 
 add_issue_to_project_and_stage(){
-  log "Linking issue to project"
+  local issue_url="$1"
+  log "Linking issue to project: ${issue_url}"
   local item_json item_id
-  item_json=$(gh project item-add "${PROJECT_NUMBER}" --owner "${OWNER}" --url "${ISSUE_URL}" --format json)
+  item_json=$(gh project item-add "${PROJECT_NUMBER}" --owner "${OWNER}" --url "${issue_url}" --format json)
   item_id=$(echo "$item_json" | jq -r '.id')
   dbg "item id: $item_id"
 
@@ -204,7 +236,10 @@ print_summary(){
   echo
   echo "Repo: https://github.com/${OWNER}/${repo}"
   echo "Project: ${PROJECT_URL}"
-  echo "Issue: ${ISSUE_URL}"
+  local issue
+  for issue in "${ISSUE_URLS[@]}"; do
+    echo "Issue: ${issue}"
+  done
 }
 
 # --- Main -------------------------------------------------------------------
@@ -218,8 +253,11 @@ main(){
   create_or_copy_project "${repo}"
   ensure_stage_field_and_options
   create_labels "${repo}"
-  create_starter_issue "${repo}"
-  add_issue_to_project_and_stage
+  create_starter_issues "${repo}"
+  local issue_url
+  for issue_url in "${ISSUE_URLS[@]}"; do
+    add_issue_to_project_and_stage "${issue_url}"
+  done
   print_summary "${repo}"
 }
 
