@@ -113,12 +113,17 @@ create_starter_issues(){
 ### Atlas instructions
 
 <details>
-<summary>For Atlas (machine-readable)</summary>
+<summary>Atlas instructions</summary>
 
-```atlas
+---
 ATLAS:REFINE
-OUTPUTS: codex_prompt, acceptance_criteria, environment
-
+PURPOSE: Prepare this issue for execution by OpenAI Codex (code generation/modification).
+OUTPUTS:
+  - codex_prompt: mandatory; a self-contained programming task spec for Codex to act on without further context.
+  - acceptance_criteria: mandatory; concise checks that validate Codex output.
+  - environment: mandatory; repo path(s), language/runtime version(s), build/test commands, required tools.
+COMPLETE WHEN:
+  - codex_prompt, acceptance_criteria, and environment are present in the issue body and are internally consistent.
 STATE:
   COMPLETE:
     MOVE: Ready
@@ -127,64 +132,65 @@ STATE:
   INCOMPLETE:
     MOVE: Backlog
     ADD: [feedback-requested]
-
 REVIEW:
   PASS:
     MOVE: Done
   FAIL:
     MOVE: Ready
     ADD: [needs-fix]
-```
+NOTES:
+  - Use the verb “refine” to describe moving from Backlog→Ready.
+  - Do not mention branches or implementation here; this step produces a Codex-ready prompt only.
+---
+
 </details>
 EOF
 )
 
   local initial_body
   initial_body=$(cat <<'EOF'
-### Why
-
+## Why
 Validate the loop end-to-end with a harmless change.
 
-### What
-
+## What
 - Add an `index.html` landing page with simple, elegant styling.
 - Include welcoming text that introduces the Atlas demo.
 
-### Out of scope
-
+## Out of scope
 - Additional subpages or navigation elements.
 - Asset pipelines or build tooling.
 
-### Acceptance criteria
+## Acceptance criteria
+- [ ] AC-1: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
+- [ ] AC-2: The landing page renders without console errors in the browser.
 
-Scenario: When browsing the website on GitHub Pages
-
-- AC-1: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
-- AC-2: The landing page renders without console errors in the browser.
+## Environment
+- repo: .
+- language: Static site (HTML/CSS)
+- commands: n/a
 
 EOF
 )
 
   local github_pages_body
   github_pages_body=$(cat <<'EOF'
-### Why
-
+## Why
 Enabling GitHub Pages ensures reviewers can access the new landing page for acceptance testing.
 
-### What
-
+## What
 - Enable GitHub Pages for this repository and point it at the default branch that serves the landing page.
 - No code changes are required; this is a repository settings update only.
 
-### Out of scope
+## Out of scope
+- Any effort beyond configuring GitHub Pages for the landing page.
 
-- Any work not directly related to enabling GitHub Pages for the landing page.
+## Acceptance criteria
+- [ ] AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
 
-### Acceptance criteria
-
-Scenario: When browsing the website on GitHub Pages
-
-- AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
+## Environment
+- repo: .
+- language: Settings-only change
+- commands: n/a
 
 EOF
 )

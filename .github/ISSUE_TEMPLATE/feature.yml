@@ -28,7 +28,7 @@ body:
       required: false
 
   - type: textarea
-    id: draft_acs
+    id: acceptance_criteria
     attributes:
       label: Acceptance criteria
       placeholder: |
@@ -38,23 +38,34 @@ body:
     validations:
       required: true
 
+  - type: textarea
+    id: environment
+    attributes:
+      label: Environment
+      placeholder: |
+        - repo: .
+        - language: <language/runtime>
+        - commands: <build/test commands>
+    validations:
+      required: true
+
   - type: markdown
     attributes:
       value: |
-        Atlas instructions below can be safely ignored and kept as-is
+        ### Atlas instructions
 
-  - type: textarea
-    id: atlas
-    attributes:
-      label: Atlas instructions
-      value: |
         <details>
-        <summary>For Atlas (machine-readable)</summary>
+        <summary>Atlas instructions</summary>
 
-        ```atlas
+        ---
         ATLAS:REFINE
-        OUTPUTS: codex_prompt, acceptance_criteria, environment
-
+        PURPOSE: Prepare this issue for execution by OpenAI Codex (code generation/modification).
+        OUTPUTS:
+          - codex_prompt: mandatory; a self-contained programming task spec for Codex to act on without further context.
+          - acceptance_criteria: mandatory; concise checks that validate Codex output.
+          - environment: mandatory; repo path(s), language/runtime version(s), build/test commands, required tools.
+        COMPLETE WHEN:
+          - codex_prompt, acceptance_criteria, and environment are present in the issue body and are internally consistent.
         STATE:
           COMPLETE:
             MOVE: Ready
@@ -63,14 +74,15 @@ body:
           INCOMPLETE:
             MOVE: Backlog
             ADD: [feedback-requested]
-
         REVIEW:
           PASS:
             MOVE: Done
           FAIL:
             MOVE: Ready
             ADD: [needs-fix]
-        ```
+        NOTES:
+          - Use the verb “refine” to describe moving from Backlog→Ready.
+          - Do not mention branches or implementation here; this step produces a Codex-ready prompt only.
+        ---
+
         </details>
-    validations:
-      required: false
