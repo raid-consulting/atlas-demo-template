@@ -112,6 +112,9 @@ create_starter_issues(){
   atlas_instructions=$(cat <<'EOF'
 ### Atlas instructions
 
+<details>
+<summary>Atlas instructions</summary>
+
 ---
 ATLAS:REFINE
 PURPOSE: Prepare this issue for execution by OpenAI Codex (code generation/modification).
@@ -139,6 +142,8 @@ NOTES:
   - Use the verb “refine” to describe moving from Backlog→Ready.
   - Do not mention branches or implementation here; this step produces a Codex-ready prompt only.
 ---
+
+</details>
 EOF
 )
 
