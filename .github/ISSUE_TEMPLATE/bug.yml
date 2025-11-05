@@ -4,17 +4,45 @@ title: "bug: <short summary>"
 labels: ["atlas", "bug", "p1"]
 body:
   - type: textarea
+    id: why
+    attributes:
+      label: Why
+      placeholder: Describe the impact of this bug.
+    validations:
+      required: true
+
+  - type: textarea
+    id: what
+    attributes:
+      label: What
+      placeholder: Summarize the incorrect behavior to refine.
+    validations:
+      required: true
+
+  - type: textarea
+    id: out_of_scope
+    attributes:
+      label: Out of scope
+      placeholder: Related changes that should not be tackled.
+    validations:
+      required: false
+
+  - type: textarea
     id: current
     attributes:
       label: Current behavior
+      placeholder: Include observed output, errors, or screenshots.
     validations:
       required: true
+
   - type: textarea
     id: expected
     attributes:
       label: Expected behavior
+      placeholder: Describe the correct outcome after the bug is refined.
     validations:
       required: true
+
   - type: textarea
     id: repro
     attributes:
@@ -22,17 +50,58 @@ body:
       placeholder: "1) … 2) … 3) …"
     validations:
       required: true
+
   - type: textarea
-    id: env
+    id: acceptance_criteria
+    attributes:
+      label: Acceptance criteria
+      placeholder: |
+        - AC-1: ...
+        - AC-2: ...
+        - AC-3: ...
+    validations:
+      required: true
+
+  - type: textarea
+    id: environment
     attributes:
       label: Environment
-      placeholder: "Browser/OS/Version/Build"
+      placeholder: |
+        - repo: .
+        - language: <language/runtime>
+        - commands: <build/test commands>
+    validations:
+      required: true
+
   - type: markdown
     attributes:
       value: |
-        <!--
-        ATLAS:REFINE (BUG)
-        - Normalize to a single outcome fix.
-        - Produce Prompt, ACs (include failing case), Env.
-        - Route per STATE RULES as in feature template.
-        -->
+        ### Atlas instructions
+
+        ---
+        ATLAS:REFINE
+        PURPOSE: Prepare this issue for execution by OpenAI Codex (code generation/modification).
+        OUTPUTS:
+          - codex_prompt: mandatory; a self-contained programming task spec for Codex to act on without further context.
+          - acceptance_criteria: mandatory; concise checks that validate Codex output.
+          - environment: mandatory; repo path(s), language/runtime version(s), build/test commands, required tools.
+        COMPLETE WHEN:
+          - codex_prompt, acceptance_criteria, and environment are present in the issue body and are internally consistent.
+        STATE:
+          COMPLETE:
+            MOVE: Ready
+            ADD: [ready, atlas-prepared]
+            REMOVE: [atlas, feedback-requested]
+          INCOMPLETE:
+            MOVE: Backlog
+            ADD: [feedback-requested]
+        REVIEW:
+          PASS:
+            MOVE: Done
+          FAIL:
+            MOVE: Ready
+            ADD: [needs-fix]
+        NOTES:
+          - Use the verb “refine” to describe moving from Backlog→Ready.
+          - Do not mention branches or implementation here; this step produces a Codex-ready prompt only.
+        ---
