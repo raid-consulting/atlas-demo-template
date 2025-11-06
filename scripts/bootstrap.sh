@@ -108,22 +108,19 @@ create_starter_issues(){
   local repo="$1"
   log "Creating starter demo issues"
 
-  local atlas_instructions
-  atlas_instructions=$(cat <<'EOF'
-### Atlas instructions
+  local atlas_instructions_codex atlas_instructions_ops
+  atlas_instructions_codex=$(cat <<'EOF'
+## Atlas Instructions
 
-<details>
-<summary>Atlas instructions</summary>
-
----
+```
 ATLAS:REFINE
-PURPOSE: Prepare this issue for execution by OpenAI Codex (code generation/modification).
+PURPOSE: Prepare this issue for execution by OpenAI Codex.
 OUTPUTS:
-  - codex_prompt: mandatory; a self-contained programming task spec for Codex to act on without further context.
-  - acceptance_criteria: mandatory; concise checks that validate Codex output.
-  - environment: mandatory; repo path(s), language/runtime version(s), build/test commands, required tools.
+  - codex_prompt
+  - acceptance_criteria
+  - environment
 COMPLETE WHEN:
-  - codex_prompt, acceptance_criteria, and environment are present in the issue body and are internally consistent.
+  - codex_prompt, acceptance_criteria, and environment are present and consistent.
 STATE:
   COMPLETE:
     MOVE: Ready
@@ -139,28 +136,50 @@ REVIEW:
     MOVE: Ready
     ADD: [needs-fix]
 NOTES:
-  - Use the verb “refine” to describe moving from Backlog→Ready.
-  - Do not mention branches or implementation here; this step produces a Codex-ready prompt only.
----
+  - Use "refine" for Backlog→Ready.
+  - Focus only on producing the Codex prompt; implementation follows separately.
+```
+EOF
+)
 
-</details>
+  atlas_instructions_ops=$(cat <<'EOF'
+## Atlas Instructions
+
+```
+ATLAS:REFINE
+PURPOSE: Prepare this issue for verification or procedural execution (non-Codex).
+OUTPUTS:
+  - acceptance_criteria
+  - environment
+COMPLETE WHEN:
+  - Acceptance criteria are defined and verifiable.
+STATE:
+  COMPLETE:
+    MOVE: Ready
+    ADD: [ready, atlas-prepared]
+    REMOVE: [atlas, feedback-requested]
+  INCOMPLETE:
+    MOVE: Backlog
+    ADD: [feedback-requested]
+REVIEW:
+  PASS:
+    MOVE: Done
+  FAIL:
+    MOVE: Ready
+    ADD: [needs-fix]
+NOTES:
+  - Use "refine" for Backlog→Ready.
+  - This issue type does not produce a Codex prompt.
+```
 EOF
 )
 
   local initial_body
   initial_body=$(cat <<'EOF'
-## Why
-Validate the loop end-to-end with a harmless change.
+## Goal
+Deliver an `index.html` landing page that welcomes visitors and demonstrates the Atlas loop end-to-end.
 
-## What
-- Add an `index.html` landing page with simple, elegant styling.
-- Include welcoming text that introduces the Atlas demo.
-
-## Out of scope
-- Additional subpages or navigation elements.
-- Asset pipelines or build tooling.
-
-## Acceptance criteria
+## Acceptance Criteria
 - [ ] AC-1: Visiting the GitHub Pages URL loads the new `index.html` landing page with simple, elegant styling and welcoming copy.
 - [ ] AC-2: The landing page renders without console errors in the browser.
 
@@ -168,36 +187,27 @@ Validate the loop end-to-end with a harmless change.
 - repo: .
 - language: Static site (HTML/CSS)
 - commands: n/a
-
 EOF
 )
 
   local github_pages_body
   github_pages_body=$(cat <<'EOF'
-## Why
-Enabling GitHub Pages ensures reviewers can access the new landing page for acceptance testing.
+## Goal
+Enable GitHub Pages so reviewers can access the landing page served from the default branch.
 
-## What
-- Enable GitHub Pages for this repository and point it at the default branch that serves the landing page.
-- No code changes are required; this is a repository settings update only.
-
-## Out of scope
-- Any effort beyond configuring GitHub Pages for the landing page.
-
-## Acceptance criteria
+## Acceptance Criteria
 - [ ] AC-1: GitHub Pages is configured for the repository, serving the site from the default branch so reviewers can access it.
 
 ## Environment
 - repo: .
 - language: Settings-only change
 - commands: n/a
-
 EOF
 )
 
   local issue_one_body issue_two_body
-  issue_one_body=$(printf '%s\n%s\n' "$initial_body" "$atlas_instructions")
-  issue_two_body=$(printf '%s\n%s\n' "$github_pages_body" "$atlas_instructions")
+  issue_one_body=$(printf '%s\n\n%s\n' "$initial_body" "$atlas_instructions_codex")
+  issue_two_body=$(printf '%s\n\n%s\n' "$github_pages_body" "$atlas_instructions_ops")
 
   local first_issue_url second_issue_url
   first_issue_url=$(gh api -X POST "repos/${OWNER}/${repo}/issues" \

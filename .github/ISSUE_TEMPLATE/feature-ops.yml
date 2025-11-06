@@ -1,13 +1,13 @@
-name: Feature (Codex)
-description: Prepare Codex-driven work
-title: "[Feature] <short title>"
+name: Feature (Operational)
+description: Prepare non-Codex operational work
+title: "[Ops] <short title>"
 labels: [atlas, p2, tshirt-s]
 body:
   - type: textarea
     id: goal
     attributes:
       label: Goal
-      placeholder: Describe the desired outcome succinctly.
+      placeholder: Describe the operational outcome to achieve.
     validations:
       required: true
   - type: textarea
@@ -36,13 +36,12 @@ body:
 
         ```
         ATLAS:REFINE
-        PURPOSE: Prepare this issue for execution by OpenAI Codex.
+        PURPOSE: Prepare this issue for verification or procedural execution (non-Codex).
         OUTPUTS:
-          - codex_prompt
           - acceptance_criteria
           - environment
         COMPLETE WHEN:
-          - codex_prompt, acceptance_criteria, and environment are present and consistent.
+          - Acceptance criteria are defined and verifiable.
         STATE:
           COMPLETE:
             MOVE: Ready
@@ -59,5 +58,5 @@ body:
             ADD: [needs-fix]
         NOTES:
           - Use "refine" for Backlog→Ready.
-          - Focus only on producing the Codex prompt; implementation follows separately.
+          - This issue type does not produce a Codex prompt.
         ```
