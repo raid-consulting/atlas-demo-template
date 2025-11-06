@@ -32,7 +32,8 @@ body:
   - type: markdown
     attributes:
       value: |-
-        ## Atlas Instructions
+        <details>
+        <summary>Atlas Instructions</summary>
 
         ```
         ATLAS:REFINE
@@ -61,3 +62,5 @@ body:
           - Use "refine" for Backlog→Ready.
           - Focus only on producing the Codex prompt; implementation follows separately.
         ```
+
+        </details>

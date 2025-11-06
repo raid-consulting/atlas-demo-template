@@ -110,7 +110,8 @@ create_starter_issues(){
 
   local atlas_instructions_codex atlas_instructions_ops
   atlas_instructions_codex=$(cat <<'EOF'
-## Atlas Instructions
+<details>
+<summary>Atlas Instructions</summary>
 
 ```
 ATLAS:REFINE
@@ -139,11 +140,14 @@ NOTES:
   - Use "refine" for Backlog→Ready.
   - Focus only on producing the Codex prompt; implementation follows separately.
 ```
+
+</details>
 EOF
 )
 
   atlas_instructions_ops=$(cat <<'EOF'
-## Atlas Instructions
+<details>
+<summary>Atlas Instructions</summary>
 
 ```
 ATLAS:REFINE
@@ -171,6 +175,8 @@ NOTES:
   - Use "refine" for Backlog→Ready.
   - This issue type does not produce a Codex prompt.
 ```
+
+</details>
 EOF
 )
 
