@@ -1,3 +1,4 @@
+# atlas:codex
 name: Feature (Codex)
 description: Prepare Codex-driven work
 title: "[Feature] <short title>"
@@ -15,8 +16,8 @@ body:
     attributes:
       label: Acceptance Criteria
       placeholder: |-
-        - AC-1: ...
-        - AC-2: ...
+        - [ ] AC-1: Describe an outcome that Atlas can verify via specific files, commands, or observable behaviour.
+        - [ ] AC-2: Include only binary pass/fail checks with all inputs, data, or expected outputs defined.
     validations:
       required: true
   - type: textarea
@@ -59,8 +60,10 @@ body:
             MOVE: Ready
             ADD: [needs-fix]
         NOTES:
-          - Use "refine" for Backlog→Ready.
-          - Focus only on producing the Codex prompt; implementation follows separately.
+          - Atlas refines and generates the codex_prompt after acceptance criteria are complete.
+          - Acceptance criteria must be fully explicit for Atlas to verify.
+          - Human triggers Codex manually once issue is Ready.
+          - Atlas verifies output during Review.
         ```
 
         </details>
