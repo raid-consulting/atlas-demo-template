@@ -137,8 +137,10 @@ REVIEW:
     MOVE: Ready
     ADD: [needs-fix]
 NOTES:
-  - Use "refine" for Backlog→Ready.
-  - Focus only on producing the Codex prompt; implementation follows separately.
+  - Atlas refines and generates the codex_prompt after acceptance criteria are complete.
+  - Acceptance criteria must be fully explicit for Atlas to verify.
+  - Human triggers Codex manually once issue is Ready.
+  - Atlas verifies output during Review.
 ```
 
 </details>
