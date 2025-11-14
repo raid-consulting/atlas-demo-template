@@ -37,12 +37,13 @@ body:
 
         ```
         ATLAS:REFINE
-        PURPOSE: Prepare this issue for verification or procedural execution (non-Codex).
+        PURPOSE: Refine and execute operational issues up to Review, automating repository or configuration changes that do not require Codex.
         OUTPUTS:
           - acceptance_criteria
           - environment
-        COMPLETE WHEN:
-          - Acceptance criteria are defined and verifiable.
+        COMPLETE WHEN (Atlas):
+          - Acceptance criteria are explicit and verifiable.
+          - Operational steps to meet them are clear and executable.
         STATE:
           COMPLETE:
             MOVE: Ready
@@ -57,9 +58,15 @@ body:
           FAIL:
             MOVE: Ready
             ADD: [needs-fix]
+        ROLES:
+          Human -- verifies refinement when issue is Ready, approves for execution, and validates results in Review.
+          Atlas -- refines issue, prepares and executes required operational steps (e.g., GitHub settings, Pages setup), and moves issue to Review once complete.
+          Codex -- not used for this issue type.
         NOTES:
-          - Use "refine" for Backlog→Ready.
-          - This issue type does not produce a Codex prompt.
+          - Atlas refines the issue until all acceptance criteria are explicit and verifiable.
+          - When refinement is complete, Atlas moves the issue to Ready and waits for human verification.
+          - Once approved, Atlas performs the operational work automatically (e.g., enable GitHub Pages) and transitions the issue to Review.
+          - Human verifies results in Review and marks Done if all criteria pass.
         ```
 
         </details>
